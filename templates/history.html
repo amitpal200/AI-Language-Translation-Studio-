@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="history-page">
+  <div class="section-title">
+    <div>
+      <p class="eyebrow">Archive</p>
+      <h1>Translation history</h1>
+    </div>
+    <div class="button-row">
+      <a class="button secondary" href="{{ url_for('history.export_csv') }}">Export CSV</a>
+      <form action="{{ url_for('history.clear') }}" method="post">
+        <button class="danger" type="submit">Clear</button>
+      </form>
+    </div>
+  </div>
+  <div class="history-tools">
+    <input type="search" placeholder="Search history" data-history-search>
+    <select data-history-filter aria-label="Filter by target language">
+      <option value="">All target languages</option>
+      {% for item in history|unique(attribute="target_language") %}
+        <option value="{{ item.target_language }}">{{ item.target_language }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  {% if history %}
+    <div class="table-wrap">
+      <table data-history-table>
+        <thead>
+          <tr>
+            <th>Source</th>
+            <th>Translation</th>
+            <th>Languages</th>
+            <th>Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in history %}
+            <tr data-search-text="{{ item.source_text }} {{ item.translated_text }} {{ item.source_language }} {{ item.target_language }}" data-target-language="{{ item.target_language }}">
+              <td>{{ item.source_text }}</td>
+              <td>{{ item.translated_text }}</td>
+              <td>{{ item.source_language }} to {{ item.target_language }}</td>
+              <td>{{ item.created_at.strftime("%Y-%m-%d %H:%M") }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <p class="empty">Your translation history is empty.</p>
+  {% endif %}
+</section>
+{% endblock %}

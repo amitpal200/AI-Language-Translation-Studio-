@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="app-grid">
+  <div class="studio">
+    <div class="studio-toolbar">
+      <div>
+        <p class="eyebrow">Translator</p>
+        <h1>Fast multilingual workspace</h1>
+      </div>
+      <div class="status-pill">
+        <span></span>
+        Online translation
+      </div>
+    </div>
+
+    <form class="translator" action="{{ url_for('translate.translate') }}" method="post" data-translator-form>
+      <div class="language-bar">
+        <select id="source_language" name="source_language" aria-label="Source language">
+          {% for code, name in languages.items() %}
+            <option value="{{ code }}" {% if code == source_language %}selected{% endif %}>{{ name }}</option>
+          {% endfor %}
+        </select>
+        <button class="icon-button swap-button" type="button" data-swap-languages aria-label="Swap languages" title="Swap languages">
+          &harr;
+        </button>
+        <select id="target_language" name="target_language" aria-label="Target language">
+          {% for code, name in languages.items() if code != "auto" %}
+            <option value="{{ code }}" {% if code == target_language %}selected{% endif %}>{{ name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="translator-panels">
+        <section class="editor-panel">
+          <div class="panel-header">
+            <label for="source_text">Source</label>
+            <button class="ghost-button" type="button" data-clear-source>Clear</button>
+          </div>
+          <textarea id="source_text" name="source_text" rows="13" placeholder="Type or paste text here" data-source-text>{{ source_text }}</textarea>
+          <div class="meta-row">
+            <span data-word-count>0 words</span>
+            <span data-char-count>0 characters</span>
+          </div>
+        </section>
+
+        <section class="editor-panel result-panel">
+          <div class="panel-header">
+            <label for="translation">Translation</label>
+            <div class="panel-actions">
+              <button class="ghost-button" type="button" data-copy-result>Copy</button>
+              <button class="ghost-button" type="button" data-download-text>TXT</button>
+            </div>
+          </div>
+          <textarea id="translation" rows="13" readonly placeholder="Your translation will appear here" data-result-text>{{ result or "" }}</textarea>
+          <div class="meta-row">
+            <span>{{ source_language }} to {{ target_language }}</span>
+            <span data-copy-status></span>
+          </div>
+        </section>
+      </div>
+
+      <div class="actions">
+        <button class="primary-button" type="submit">Translate</button>
+        {% if result %}
+          <button class="secondary-button" type="submit" formaction="{{ url_for('history.export_txt') }}" formmethod="post">
+            Download TXT
+          </button>
+        {% endif %}
+      </div>
+      <input type="hidden" name="translated_text" value="{{ result or '' }}">
+    </form>
+
+    {% if result %}
+      <form class="inline-actions" action="{{ url_for('speech.speech') }}" method="post">
+        <input type="hidden" name="text" value="{{ result }}">
+        <input type="hidden" name="language" value="{{ target_language }}">
+        <button class="secondary-button" type="submit">Download speech</button>
+      </form>
+    {% endif %}
+  </div>
+
+  <aside class="side-panel">
+    <div class="section-title compact">
+      <h2>Recent</h2>
+      <a href="{{ url_for('history.history') }}">All history</a>
+    </div>
+    {% if history %}
+      <div class="activity-list">
+      {% for item in history %}
+        <button class="activity-item" type="button" data-history-source="{{ item.source_text }}" data-history-result="{{ item.translated_text }}">
+          <p>{{ item.source_text }}</p>
+          <strong>{{ item.translated_text }}</strong>
+          <span>{{ item.source_language }} to {{ item.target_language }}</span>
+        </button>
+      {% endfor %}
+      </div>
+    {% else %}
+      <p class="empty">No translations yet.</p>
+    {% endif %}
+  </aside>
+</section>
+{% endblock %}
