@@ -1,92 +1,134 @@
 # AI Language Translation Studio
 
-A fast Flask-based multilingual translation workspace that helps users translate text, keep translation history, export results, and generate speech output from translated content.
+![Python](https://img.shields.io/badge/Python-3.x-3776AB?style=for-the-badge&logo=python&logoColor=white)
+![Flask](https://img.shields.io/badge/Flask-Web%20App-000000?style=for-the-badge&logo=flask&logoColor=white)
+![SQLite](https://img.shields.io/badge/SQLite-Database-003B57?style=for-the-badge&logo=sqlite&logoColor=white)
+![Status](https://img.shields.io/badge/Status-Active-success?style=for-the-badge)
 
-## Preview
+AI Language Translation Studio is a clean Flask-based translation web app for translating text between languages, managing translation history, downloading translated output, and generating speech audio. It is designed as a simple but polished multilingual workspace where users can write or paste text, translate it quickly, and reuse the result through copy, TXT download, and speech download options.
 
-### Translation workspace
+## Live Preview
 
-![AI Language Translation Studio workspace](docs/Screenshots/translation-workspace.png)
+### Translation Workspace
 
-### English to Hindi output
+<p align="center">
+  <img src="docs/Screenshots/translation-workspace.png" alt="AI Language Translation Studio translation workspace" width="100%">
+</p>
 
-![Translated Hindi output with source text](docs/Screenshots/translated-output.png)
+### English to Hindi Translation Result
 
-## Highlights
+<p align="center">
+  <img src="docs/Screenshots/translated-output.png" alt="English to Hindi translation output" width="100%">
+</p>
 
-- Translate text between multiple languages with an easy two-panel workspace.
-- Detect source language and translate into the selected target language.
-- Copy translated text or download it as a TXT file.
+## Why This Project Stands Out
+
+- Fast and focused translation workspace built with Flask.
+- Clean two-panel editor for source text and translated output.
+- Language selector for source and target languages.
+- English to Hindi translation support with readable Devanagari output.
+- Translation history panel for reviewing previous work.
+- Copy translated text directly from the app.
+- Download translated text as a `.txt` file.
 - Generate downloadable speech audio from translated text.
-- Keep recent translation history for quick review.
-- Extract and translate text from images with OCR upload support.
-- Extract and translate text from PDF documents.
-- Use speech-to-text translation from uploaded audio.
-- Use a grammar correction helper for cleaner writing.
-- Export saved translation history as CSV.
+- REST API endpoints for translation and supported languages.
+- SQLite database support for persistent translation history.
+- Responsive layout with a simple, modern UI.
+
+## Features
+
+| Feature | Description |
+| --- | --- |
+| Text Translation | Translate text between supported languages using a simple web interface. |
+| Source and Target Language Selection | Choose the input language and the language you want to translate into. |
+| Recent History | Save and view recent translations for quick access. |
+| Copy Output | Copy translated text instantly from the result panel. |
+| TXT Export | Download translated content as a text file. |
+| Speech Download | Convert translated text into speech and download the audio. |
+| API Support | Use translation features programmatically through API routes. |
+| SQLite Storage | Store translation history locally in a lightweight database. |
 
 ## Tech Stack
 
-- Python
-- Flask
-- Deep Translator
-- gTTS and SpeechRecognition
-- Tesseract OCR through pytesseract
-- HTML, CSS, and JavaScript
-- SQLite
+| Layer | Technology |
+| --- | --- |
+| Backend | Python, Flask |
+| Translation | Deep Translator |
+| Text to Speech | gTTS |
+| Database | SQLite, SQLAlchemy |
+| Frontend | HTML, CSS, JavaScript |
+| Testing | Python unittest |
 
 ## Project Structure
 
 ```text
 AI-Language-Translation-Studio/
-├── app.py
-├── run.py
-├── config.py
-├── database/
-├── docs/
-│   └── Screenshots/
-├── routes/
-├── services/
-├── static/
-├── templates/
-├── tests/
-└── requirements.txt
+|-- app.py
+|-- run.py
+|-- config.py
+|-- requirements.txt
+|-- database/
+|   |-- database.py
+|   |-- models.py
+|-- routes/
+|   |-- api.py
+|   |-- history.py
+|   |-- home.py
+|   |-- speech.py
+|   |-- translate.py
+|-- services/
+|   |-- export_service.py
+|   |-- history_service.py
+|   |-- language_detector.py
+|   |-- speech_service.py
+|   |-- translator_service.py
+|-- static/
+|   |-- css/
+|   |-- js/
+|-- templates/
+|   |-- base.html
+|   |-- history.html
+|   |-- index.html
+|-- tests/
+|   |-- test_translation_app.py
+|-- docs/
+|   |-- Screenshots/
 ```
 
 ## Getting Started
 
-### 1. Clone the repository
+### 1. Clone the Repository
 
 ```bash
 git clone https://github.com/amitpal200/AI-Language-Translation-Studio-.git
 cd AI-Language-Translation-Studio-
 ```
 
-### 2. Create and activate a virtual environment
+### 2. Create a Virtual Environment
 
 ```bash
 python -m venv venv
 ```
 
-Windows:
+Activate it on Windows:
 
 ```powershell
 venv\Scripts\activate
 ```
 
-macOS/Linux:
+Activate it on macOS/Linux:
 
 ```bash
 source venv/bin/activate
 ```
 
-### 3. Install dependencies
+### 3. Install Dependencies
 
 ```bash
 pip install -r requirements.txt
 ```
 
-### 4. Run the app
+### 4. Run the Application
 
 ```bash
 python run.py
@@ -98,33 +140,49 @@ Open the app in your browser:
 http://127.0.0.1:5000
 ```
 
-The extra tools page is available at:
-
-```text
-http://127.0.0.1:5000/tools/
-```
-
 ## API Usage
 
-Translate text:
+### Translate Text
 
 ```powershell
 Invoke-RestMethod -Method Post -Uri http://127.0.0.1:5000/api/translate -ContentType "application/json" -Body '{"text":"hello","target_language":"hi"}'
 ```
 
-List supported languages:
+Example response:
+
+```json
+{
+  "translation": "नमस्ते",
+  "target_language": "hi",
+  "history_id": 1
+}
+```
+
+### List Supported Languages
 
 ```powershell
 Invoke-RestMethod http://127.0.0.1:5000/api/languages
 ```
 
-## Notes
+## Testing
 
-- Most translations use `deep-translator`, so internet access is required for full translation support.
-- Speech recognition and text-to-speech features also use online services.
-- Image OCR uses `pytesseract`, so the Tesseract OCR engine must be installed on your system.
-- A few small offline examples are included so the app can still be smoke-tested without network access.
+Run the test suite with:
+
+```bash
+python -m unittest tests.test_translation_app
+```
+
+## Important Notes
+
+- Full translation support requires internet access because the app uses online translation services.
+- Text-to-speech output also depends on online speech generation services.
+- A few offline sample translations are included so the project can still be smoke-tested without network access.
+- Screenshots are stored inside `docs/Screenshots` so they display correctly on GitHub.
 
 ## Author
 
 Built by [Amit Pal](https://github.com/amitpal200).
+
+## Repository
+
+GitHub: [AI Language Translation Studio](https://github.com/amitpal200/AI-Language-Translation-Studio-)
